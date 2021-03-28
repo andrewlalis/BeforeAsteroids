@@ -1,5 +1,6 @@
 package nl.andrewlalis.view;
 
+import nl.andrewlalis.model.GameModel;
 import nl.andrewlalis.util.VersionReader;
 
 import javax.swing.*;
@@ -12,7 +13,7 @@ import java.util.Properties;
  * purpose is to contain a {@link GamePanel} as its content pane.
  */
 public class GameFrame extends JFrame {
-	public GameFrame() {
+	public GameFrame(GameModel model) {
 		final Properties settings = this.loadSettings();
 		this.setTitle(settings.get("title") + " V" + VersionReader.getVersion());
 		this.setPreferredSize(new Dimension( // Set the frame's size according to settings.
@@ -20,7 +21,7 @@ public class GameFrame extends JFrame {
 				Integer.parseInt((String) settings.get("height"))
 		));
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE); // Set the frame to be disposed when the top-right 'X' is clicked.
-		GamePanel gamePanel = new GamePanel();
+		GamePanel gamePanel = new GamePanel(model);
 		this.setContentPane(gamePanel);
 		this.setLayout(new FlowLayout());
 		this.pack();
