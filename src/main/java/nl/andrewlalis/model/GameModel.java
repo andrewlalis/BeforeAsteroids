@@ -24,11 +24,10 @@ public class GameModel {
 		for (PhysicsObject object : this.objects) {
 			for (PhysicsObject other : this.objects) {
 				if (object != other) {
-					object.updateVelocityForObject(other, deltaT);
+					object.gravitateTowards(other, deltaT);
 				}
 			}
 			object.updatePosition(deltaT);
-			//System.out.println(object);
 		}
 		if (this.observerPanel != null) {
 			this.observerPanel.repaint();

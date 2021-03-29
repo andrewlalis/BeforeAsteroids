@@ -1,5 +1,7 @@
 package nl.andrewlalis.model;
 
+import nl.andrewlalis.physics.Vec2;
+
 public class PhysicsObject {
 	private static final double G = 6.674E-11;
 
@@ -7,43 +9,32 @@ public class PhysicsObject {
 	protected double mass;
 
 	// Position in meters.
-	protected double positionX;
-	protected double positionY;
+	protected Vec2 position;
 
 	// Velocity in m/s
-	protected double velocityX;
-	protected double velocityY;
+	protected Vec2 velocity;
 
 	protected double orientation;
 	protected double angularVelocity;
 
-	public PhysicsObject(double mass, double positionX, double positionY, double velocityX, double velocityY, double orientation) {
+	public PhysicsObject(double mass) {
 		this.mass = mass;
-		this.positionX = positionX;
-		this.positionY = positionY;
-		this.velocityX = velocityX;
-		this.velocityY = velocityY;
-		this.orientation = orientation;
+		this.position = new Vec2();
+		this.velocity = new Vec2();
 		this.angularVelocity = 0;
 	}
 
-	public void updateVelocityForObject(PhysicsObject other, double deltaT) {
-		double dx = this.positionX - other.positionX;
-		double dy = this.positionY - other.positionY;
-		double radius = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+	public void gravitateTowards(PhysicsObject other, double deltaT) {
+		double radius = this.position.hyp(other.position);
 		radius = Math.max(radius, 0.01);
-		double angle = Math.atan2(dy, dx);
-		double a = -G * other.mass / (Math.pow(radius, 2));
-
-		double ax = a * Math.cos(angle);
-		double ay = a * Math.sin(angle);
-		this.velocityX += ax * deltaT;
-		this.velocityY += ay * deltaT;
+		double angle = this.position.angleTo(other.position);
+		Vec2 acceleration = new Vec2(Math.cos(angle), Math.sin(angle))
+				.mul(deltaT * -G * other.mass / (Math.pow(radius, 2)));
+		this.velocity.acc(acceleration);
 	}
 
 	public void updatePosition(double deltaT) {
-		this.positionX += this.velocityX * deltaT;
-		this.positionY += this.velocityY * deltaT;
+		this.position.acc(this.velocity.mul(deltaT));
 		this.orientation += this.angularVelocity * deltaT;
 		this.normalizeOrientation();
 	}
@@ -60,20 +51,30 @@ public class PhysicsObject {
 		}
 	}
 
-	public double getPositionX() {
-		return positionX;
+	public Vec2 getPosition() {
+		return position;
 	}
 
-	public double getPositionY() {
-		return positionY;
+	public void setPosition(Vec2 position) {
+		this.setPosition(position.x, position.y);
 	}
 
-	public double getVelocityX() {
-		return velocityX;
+	public void setPosition(double x, double y) {
+		this.position.x = x;
+		this.position.y = y;
 	}
 
-	public double getVelocityY() {
-		return velocityY;
+	public Vec2 getVelocity() {
+		return velocity;
+	}
+
+	public void setVelocity(Vec2 velocity) {
+		this.setVelocity(velocity.x, velocity.y);
+	}
+
+	public void setVelocity(double x, double y) {
+		this.velocity.x = x;
+		this.velocity.y = y;
 	}
 
 	public double getOrientation() {
@@ -86,17 +87,5 @@ public class PhysicsObject {
 
 	public void setAngularVelocity(double angularVelocity) {
 		this.angularVelocity = angularVelocity;
-	}
-
-	@Override
-	public String toString() {
-		return "PhysicsObject{" +
-				"mass=" + mass +
-				", positionX=" + positionX +
-				", positionY=" + positionY +
-				", velocityX=" + velocityX +
-				", velocityY=" + velocityY +
-				", orientation=" + orientation +
-				'}';
 	}
 }
