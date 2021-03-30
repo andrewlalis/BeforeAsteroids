@@ -1,5 +1,6 @@
 package nl.andrewlalis.view;
 
+import nl.andrewlalis.control.PlayerListener;
 import nl.andrewlalis.model.GameModel;
 import nl.andrewlalis.model.GameUpdater;
 import nl.andrewlalis.util.VersionReader;
@@ -32,7 +33,7 @@ public class GameFrame extends JFrame {
 		this.pack();
 		this.setLocationRelativeTo(null); // Start with the frame centered in the screen.
 
-		this.updater = new GameUpdater(model);
+		this.updater = new GameUpdater(model, gamePanel);
 		this.updater.start();
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -40,6 +41,7 @@ public class GameFrame extends JFrame {
 				updater.setRunning(false);
 			}
 		});
+		this.addKeyListener(new PlayerListener(model.getPlayer()));
 	}
 
 	private Properties loadSettings() {

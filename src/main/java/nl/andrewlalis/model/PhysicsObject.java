@@ -2,19 +2,20 @@ package nl.andrewlalis.model;
 
 import nl.andrewlalis.physics.Vec2;
 
+import java.awt.geom.AffineTransform;
+
 public class PhysicsObject {
 	private static final double G = 6.674E-11;
 
 	// Mass in Kg.
 	protected double mass;
-
 	// Position in meters.
 	protected Vec2 position;
-
 	// Velocity in m/s
 	protected Vec2 velocity;
-
+	// Orientation in the 2D plane, in radians, [0, 2 * PI)
 	protected double orientation;
+	// Rotational speed, in rad/s.
 	protected double angularVelocity;
 
 	public PhysicsObject(double mass) {
@@ -26,10 +27,10 @@ public class PhysicsObject {
 
 	public void gravitateTowards(PhysicsObject other, double deltaT) {
 		double radius = this.position.hyp(other.position);
-		radius = Math.max(radius, 0.01);
+		radius = Math.max(radius, 0.01); // Set a min-bound for radius to prevent black-hole scenarios.
 		double angle = this.position.angleTo(other.position);
 		Vec2 acceleration = new Vec2(Math.cos(angle), Math.sin(angle))
-				.mul(deltaT * -G * other.mass / (Math.pow(radius, 2)));
+				.mul(deltaT * G * other.mass / (Math.pow(radius, 2)));
 		this.velocity.acc(acceleration);
 	}
 
@@ -43,7 +44,7 @@ public class PhysicsObject {
 	 * Normalizes the object's orientation to between 0 and 2 pi.
 	 */
 	private void normalizeOrientation() {
-		while (this.orientation > 2 * Math.PI) {
+		while (this.orientation >= 2 * Math.PI) {
 			orientation -= 2 * Math.PI;
 		}
 		while (this.orientation < 0) {
@@ -81,11 +82,26 @@ public class PhysicsObject {
 		return orientation;
 	}
 
+	public void setOrientation(double orientation) {
+		this.orientation = orientation;
+		this.normalizeOrientation();
+	}
+
 	public double getAngularVelocity() {
 		return angularVelocity;
 	}
 
 	public void setAngularVelocity(double angularVelocity) {
 		this.angularVelocity = angularVelocity;
+	}
+
+	/**
+	 * @return A transform that can be applied to a graphics context so that
+	 * this object can be rendered in local coordinates.
+	 */
+	public AffineTransform getTransform() {
+		var tx = AffineTransform.getTranslateInstance(this.position.x, this.position.y);
+		tx.rotate(this.orientation);
+		return tx;
 	}
 }

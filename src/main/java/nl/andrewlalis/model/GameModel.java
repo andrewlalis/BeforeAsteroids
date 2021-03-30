@@ -1,36 +1,26 @@
 package nl.andrewlalis.model;
 
-import nl.andrewlalis.view.GamePanel;
-
+import java.util.HashSet;
 import java.util.Set;
 
 public class GameModel {
-	private Set<PhysicsObject> objects;
-	private GamePanel observerPanel;
+	private final Player player;
+	private final Set<PhysicsObject> objects;
 
-	public GameModel(Set<PhysicsObject> objects) {
-		this.objects = objects;
+	public GameModel(Player player) {
+		this.player = player;
+		this.objects = new HashSet<>();
 	}
 
 	public Set<PhysicsObject> getObjects() {
 		return objects;
 	}
 
-	public void setObserverPanel(GamePanel observerPanel) {
-		this.observerPanel = observerPanel;
+	public void add(PhysicsObject object) {
+		this.objects.add(object);
 	}
 
-	public void tick(double deltaT) {
-		for (PhysicsObject object : this.objects) {
-			for (PhysicsObject other : this.objects) {
-				if (object != other) {
-					object.gravitateTowards(other, deltaT);
-				}
-			}
-			object.updatePosition(deltaT);
-		}
-		if (this.observerPanel != null) {
-			this.observerPanel.repaint();
-		}
+	public Player getPlayer() {
+		return player;
 	}
 }

@@ -50,11 +50,11 @@ public class Vec2 {
 	}
 
 	public double hyp(Vec2 other) {
-		return Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2));
+		return Math.sqrt(Math.pow(other.x - x, 2) + Math.pow(other.y - y, 2));
 	}
 
 	public double angleTo(Vec2 other) {
-		return Math.atan2(y - other.y, x - other.x);
+		return Math.atan2(other.y - y, other.x - x);
 	}
 
 	@Override
