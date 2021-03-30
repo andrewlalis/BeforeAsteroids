@@ -9,6 +9,8 @@ public class PhysicsObject {
 
 	// Mass in Kg.
 	protected double mass;
+	// Bounding radius, in meters.
+	protected double radius;
 	// Position in meters.
 	protected Vec2 position;
 	// Velocity in m/s
@@ -18,8 +20,9 @@ public class PhysicsObject {
 	// Rotational speed, in rad/s.
 	protected double angularVelocity;
 
-	public PhysicsObject(double mass) {
+	public PhysicsObject(double mass, double radius) {
 		this.mass = mass;
+		this.radius = radius;
 		this.position = new Vec2();
 		this.velocity = new Vec2();
 		this.angularVelocity = 0;
@@ -50,6 +53,14 @@ public class PhysicsObject {
 		while (this.orientation < 0) {
 			orientation += 2 * Math.PI;
 		}
+	}
+
+	public double getMass() {
+		return mass;
+	}
+
+	public double getRadius() {
+		return radius;
 	}
 
 	public Vec2 getPosition() {

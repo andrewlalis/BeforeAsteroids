@@ -1,5 +1,6 @@
 package nl.andrewlalis.model;
 
+import nl.andrewlalis.physics.Vec2;
 import nl.andrewlalis.view.GamePanel;
 
 public class GameUpdater extends Thread {
@@ -35,10 +36,21 @@ public class GameUpdater extends Thread {
 				double elapsedSeconds = timeSinceLastPhysicsUpdate / 1000.0;
 				this.updateModelPhysics(elapsedSeconds * PHYSICS_SPEED);
 				lastPhysicsUpdate = currentTime;
+				timeSinceLastPhysicsUpdate = 0L;
 			}
 			if (timeSinceLastDisplayUpdate >= MILLISECONDS_PER_DISPLAY_FRAME) {
 				this.gamePanel.repaint();
 				lastDisplayUpdate = currentTime;
+				timeSinceLastDisplayUpdate = 0L;
+			}
+			long timeUntilNextPhysicsUpdate = (long) (MILLISECONDS_PER_PHYSICS_TICK - timeSinceLastPhysicsUpdate);
+			long timeUntilNextDisplayUpdate = (long) (MILLISECONDS_PER_DISPLAY_FRAME - timeSinceLastDisplayUpdate);
+
+			// Sleep to reduce CPU usage.
+			try {
+				Thread.sleep(Math.min(timeUntilNextPhysicsUpdate, timeUntilNextDisplayUpdate));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -48,6 +60,21 @@ public class GameUpdater extends Thread {
 			for (PhysicsObject other : this.model.getObjects()) {
 				if (object != other) {
 					object.gravitateTowards(other, deltaT);
+					if (this.checkCollision(object, other)) {
+						// Perfectly elastic collision: https://en.wikipedia.org/wiki/Elastic_collision
+						Vec2 a = object.getPosition().sub(other.getPosition()).mul(
+								(object.getVelocity().sub(other.getVelocity()).dot(object.getPosition().sub(other.getPosition()))
+								/ Math.pow(object.getPosition().sub(other.getPosition()).mag(), 2))
+						);
+						Vec2 v1 = object.getVelocity().sub(a.mul(2 * other.getMass() / (object.getMass() + other.getMass())));
+						Vec2 b = other.getPosition().sub(object.getPosition()).mul(
+								(other.getVelocity().sub(object.getVelocity()).dot(other.getPosition().sub(object.getPosition())))
+								/ Math.pow(other.getPosition().sub(object.getPosition()).mag(), 2)
+						);
+						Vec2 v2 = other.getVelocity().sub(b.mul(2 * object.getMass() / (object.getMass() + other.getMass())));
+						object.setVelocity(v1);
+						other.setVelocity(v2);
+					}
 				}
 			}
 			object.updatePosition(deltaT);
@@ -61,5 +88,10 @@ public class GameUpdater extends Thread {
 		}
 		this.model.getPlayer().getShip().updateMovement(deltaT);
 		this.model.getPlayer().getShip().updatePosition(deltaT);
+	}
+
+	private boolean checkCollision(PhysicsObject object, PhysicsObject other) {
+		double distance = object.getPosition().hyp(other.getPosition());
+		return distance < object.getRadius() + other.getRadius();
 	}
 }

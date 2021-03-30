@@ -3,7 +3,6 @@ package nl.andrewlalis.view;
 import nl.andrewlalis.control.PlayerListener;
 import nl.andrewlalis.model.GameModel;
 import nl.andrewlalis.model.GameUpdater;
-import nl.andrewlalis.util.VersionReader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,11 +16,11 @@ import java.util.Properties;
  * purpose is to contain a {@link GamePanel} as its content pane.
  */
 public class GameFrame extends JFrame {
-	private GameUpdater updater;
+	private final GameUpdater updater;
 
 	public GameFrame(GameModel model) {
 		final Properties settings = this.loadSettings();
-		this.setTitle(settings.get("title") + " V" + VersionReader.getVersion());
+		this.setTitle((String) settings.get("title"));
 		this.setPreferredSize(new Dimension( // Set the frame's size according to settings.
 				Integer.parseInt((String) settings.get("width")),
 				Integer.parseInt((String) settings.get("height"))

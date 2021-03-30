@@ -45,11 +45,10 @@ public class PlayerListener implements KeyListener, MouseWheelListener {
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		System.out.println(e);
 		if (e.getWheelRotation() > 0) {
-			player.setScaleFactor(player.getScaleFactor() + 1.0);
+			player.setScaleFactor(Math.max(0.01, player.getScaleFactor() / 2));
 		} else if (e.getWheelRotation() < 0) {
-			player.setScaleFactor(player.getScaleFactor() - 1.0);
+			player.setScaleFactor(Math.min(10.0, player.getScaleFactor() * 2));
 		}
 	}
 }

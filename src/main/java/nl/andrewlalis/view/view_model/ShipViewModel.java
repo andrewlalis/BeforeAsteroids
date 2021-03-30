@@ -14,7 +14,7 @@ public class ShipViewModel implements ViewModel {
 
 	@Override
 	public void draw(Graphics2D g2) {
-		double s = this.object.getSize();
+		double s = this.object.getRadius();
 		double bodyFront = -s / 2;
 		double bodySide = s / 4;
 		var body = new Path2D.Double();

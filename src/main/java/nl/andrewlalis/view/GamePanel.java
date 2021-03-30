@@ -8,9 +8,10 @@ import nl.andrewlalis.physics.Vec2;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The game panel is the component in which the entire game will be rendered. It
@@ -34,35 +35,29 @@ public class GamePanel extends JPanel {
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 
 		Ship pShip = this.model.getPlayer().getShip();
-		double shipX = pShip.getPosition().x;
-		double shipY = pShip.getPosition().y;
-		double screenMidX = (this.getWidth() / 2.0);
-		double screenMidY = (this.getHeight() / 2.0);
-		g2.translate(screenMidX, screenMidY);
-		this.model.getPlayer().getShip().getViewModel().draw(g2);
+		g2.translate((this.getWidth() / 2.0), (this.getHeight() / 2.0));
+		g2.scale(this.model.getPlayer().getScaleFactor(), this.model.getPlayer().getScaleFactor());
+		pShip.getViewModel().draw(g2);
 		g2.rotate(-pShip.getOrientation());
-		g2.translate(-shipX, -shipY);
+		g2.translate(-pShip.getPosition().x, -pShip.getPosition().y);
 
-		//g2.setTransform(tx);
-		//g2.translate(shipX, shipY);
-		//g2.rotate(-pShip.getOrientation());
+		Set<PhysicsObject> objectsToDraw = new HashSet<>(this.model.getObjects());
+		objectsToDraw.remove(this.model.getFocusedObject());
 
-		//g2.translate(this.model.getPlayer().getShip().getPosition().x, this.model.getPlayer().getShip().getPosition().y);
-		//g2.rotate(this.model.getPlayer().getShip().getOrientation());
-		for (PhysicsObject object : this.model.getObjects()) {
+		for (PhysicsObject object : objectsToDraw) {
 			if (object instanceof ViewModelled) {
 				((ViewModelled) object).getViewModel().draw(g2);
 			}
 		}
 
-//		Deque<Vec2> trail = this.model.getPlayer().getShip().getTrail();
-//		int i = 0;
-//		for (Vec2 p : trail) {
-//			int alpha = (int) (((trail.size() - i) / (double) trail.size()) * 128);
-//			g2.setColor(new Color(255, 255, 255, alpha));
-//			g2.fill(new Ellipse2D.Double(p.x - 1, p.y - 1, 2, 2));
-//			i++;
-//		}
+		Deque<Vec2> trail = this.model.getPlayer().getShip().getTrail();
+		int i = 0;
+		for (Vec2 p : trail) {
+			int alpha = (int) (((trail.size() - i) / (double) trail.size()) * 128);
+			g2.setColor(new Color(255, 255, 255, alpha));
+			g2.fill(new Ellipse2D.Double(p.x - 1, p.y - 1, 2, 2));
+			i++;
+		}
 
 	}
 }

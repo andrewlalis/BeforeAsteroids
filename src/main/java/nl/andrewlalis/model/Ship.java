@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class Ship extends PhysicsObject implements ViewModelled {
 	private static final int TRAIL_SIZE = 256;
 
-	private double size;
+	private double thrust;
 	private final ShipViewModel viewModel;
 	private Deque<Vec2> trail;
 
@@ -18,9 +18,9 @@ public class Ship extends PhysicsObject implements ViewModelled {
 	public boolean turningRight = false;
 	public boolean turningLeft = false;
 
-	public Ship(double mass, double size) {
-		super(mass);
-		this.size = size;
+	public Ship(double mass, double size, double thrust) {
+		super(mass, size);
+		this.thrust = thrust;
 		this.trail = new ConcurrentLinkedDeque<>();
 		this.viewModel = new ShipViewModel(this);
 	}
@@ -34,18 +34,13 @@ public class Ship extends PhysicsObject implements ViewModelled {
 		super.updatePosition(deltaT);
 	}
 
-	public double getSize() {
-		return size;
-	}
-
 	public Deque<Vec2> getTrail() {
 		return trail;
 	}
 
 	public void updateMovement(double deltaT) {
 		if (this.forwardThrusterEnabled) {
-			double force = 50000;
-			double a = deltaT * force / this.mass;
+			double a = deltaT * this.thrust / this.mass;
 			double ax = a * Math.cos(this.orientation - (Math.PI / 2));
 			double ay = a * Math.sin(this.orientation - (Math.PI / 2));
 			this.velocity.acc(new Vec2(ax, ay));

@@ -6,13 +6,12 @@ import nl.andrewlalis.view.view_model.ViewModel;
 import java.awt.*;
 
 public class SimpleBody extends PhysicsObject implements ViewModelled {
-	private double radius;
 	private Color color;
 
 	private final SimpleBodyViewModel viewModel;
 
 	public SimpleBody(double mass, double radius, Color color) {
-		super(mass);
+		super(mass, radius);
 		this.radius = radius;
 		this.color = color;
 		this.viewModel = new SimpleBodyViewModel(this);
