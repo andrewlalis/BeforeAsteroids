@@ -1,12 +1,13 @@
 package nl.andrewlalis.control;
 
 import nl.andrewlalis.model.Player;
-import nl.andrewlalis.physics.Vec2;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
-public class PlayerListener implements KeyListener {
+public class PlayerListener implements KeyListener, MouseWheelListener {
 	private Player player;
 
 	public PlayerListener(Player player) {
@@ -39,6 +40,16 @@ public class PlayerListener implements KeyListener {
 			player.getShip().turningLeft = false;
 		} else if (c == KeyEvent.VK_D) {
 			player.getShip().turningRight = false;
+		}
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		System.out.println(e);
+		if (e.getWheelRotation() > 0) {
+			player.setScaleFactor(player.getScaleFactor() + 1.0);
+		} else if (e.getWheelRotation() < 0) {
+			player.setScaleFactor(player.getScaleFactor() - 1.0);
 		}
 	}
 }

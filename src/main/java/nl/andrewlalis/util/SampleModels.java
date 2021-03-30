@@ -20,4 +20,10 @@ public class SampleModels {
 		model.add(ball);
 		return model;
 	}
+
+	public static GameModel singleShip() {
+		Player p = new Player(new Ship(1000, 30));
+		p.getShip().setPosition(100, 100);
+		return new GameModel(p);
+	}
 }

@@ -6,10 +6,12 @@ import java.util.Set;
 public class GameModel {
 	private final Player player;
 	private final Set<PhysicsObject> objects;
+	private PhysicsObject focusedObject;
 
 	public GameModel(Player player) {
 		this.player = player;
 		this.objects = new HashSet<>();
+		this.focusedObject = this.player.getShip();
 	}
 
 	public Set<PhysicsObject> getObjects() {
@@ -18,6 +20,10 @@ public class GameModel {
 
 	public void add(PhysicsObject object) {
 		this.objects.add(object);
+	}
+
+	public void setFocusedObject(PhysicsObject object) {
+		this.focusedObject = object;
 	}
 
 	public Player getPlayer() {

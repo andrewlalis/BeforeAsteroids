@@ -7,6 +7,7 @@ import java.awt.geom.Path2D;
 
 public class ShipViewModel implements ViewModel {
 	private Ship object;
+
 	public ShipViewModel(Ship object) {
 		this.object = object;
 	}

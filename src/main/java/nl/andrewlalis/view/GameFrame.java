@@ -41,7 +41,9 @@ public class GameFrame extends JFrame {
 				updater.setRunning(false);
 			}
 		});
-		this.addKeyListener(new PlayerListener(model.getPlayer()));
+		PlayerListener pl = new PlayerListener(model.getPlayer());
+		this.addKeyListener(pl);
+		this.addMouseWheelListener(pl);
 	}
 
 	private Properties loadSettings() {
