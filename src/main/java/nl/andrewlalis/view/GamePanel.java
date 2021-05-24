@@ -19,7 +19,7 @@ import java.util.Set;
  * of information when rendering.
  */
 public class GamePanel extends JPanel {
-	private GameModel model;
+	private final GameModel model;
 
 	public GamePanel(GameModel model) {
 		this.model = model;
